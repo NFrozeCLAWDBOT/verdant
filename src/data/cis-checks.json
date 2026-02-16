@@ -1,0 +1,210 @@
+[
+  {
+    "id": "1.1",
+    "category": "Identity and Access Management",
+    "title": "Ensure MFA is enabled for the root account",
+    "description": "The root account has unrestricted access to all resources. Without MFA, a compromised password gives an attacker full control of the entire AWS environment.",
+    "severity": "critical",
+    "evaluator": "root_mfa_enabled",
+    "remediation": {
+      "description": "Enable MFA on the root account via the IAM console.",
+      "command": null,
+      "consoleSteps": ["Sign in as root", "Go to IAM > Security credentials", "Activate MFA"]
+    }
+  },
+  {
+    "id": "1.2",
+    "category": "Identity and Access Management",
+    "title": "Ensure IAM password policy requires minimum length >= 14",
+    "description": "Short passwords are vulnerable to brute-force attacks. A minimum length of 14 characters significantly increases resistance to password guessing.",
+    "severity": "high",
+    "evaluator": "password_min_length",
+    "remediation": {
+      "description": "Set the minimum password length to 14 or higher.",
+      "command": "aws iam update-account-password-policy --minimum-password-length 14",
+      "consoleSteps": null
+    }
+  },
+  {
+    "id": "1.3",
+    "category": "Identity and Access Management",
+    "title": "Ensure IAM password policy prevents password reuse",
+    "description": "Without password reuse prevention, users can cycle back to previously compromised passwords.",
+    "severity": "medium",
+    "evaluator": "password_reuse_prevention",
+    "remediation": {
+      "description": "Set password reuse prevention to remember at least 24 previous passwords.",
+      "command": "aws iam update-account-password-policy --password-reuse-prevention 24",
+      "consoleSteps": null
+    }
+  },
+  {
+    "id": "1.4",
+    "category": "Identity and Access Management",
+    "title": "Ensure IAM users have MFA enabled",
+    "description": "Without MFA, IAM user accounts are vulnerable to credential theft. MFA adds a second layer of authentication beyond passwords.",
+    "severity": "high",
+    "evaluator": "users_mfa_enabled",
+    "remediation": {
+      "description": "Enable MFA for all IAM users with console access.",
+      "command": null,
+      "consoleSteps": ["Go to IAM > Users", "Select each user", "Security credentials > Assign MFA device"]
+    }
+  },
+  {
+    "id": "1.5",
+    "category": "Identity and Access Management",
+    "title": "Ensure no access keys exist for the root account",
+    "description": "Root access keys provide unrestricted access and cannot be limited by IAM policies. If leaked, an attacker has full control with no audit trail attribution.",
+    "severity": "critical",
+    "evaluator": "no_root_access_keys",
+    "remediation": {
+      "description": "Delete all root account access keys.",
+      "command": null,
+      "consoleSteps": ["Sign in as root", "Go to IAM > Security credentials", "Delete access keys"]
+    }
+  },
+  {
+    "id": "1.6",
+    "category": "Identity and Access Management",
+    "title": "Ensure access keys are rotated within 90 days",
+    "description": "Long-lived access keys increase the window of exposure if a key is compromised. Regular rotation limits the blast radius of credential leaks.",
+    "severity": "medium",
+    "evaluator": "access_keys_rotated",
+    "remediation": {
+      "description": "Rotate access keys that are older than 90 days.",
+      "command": "aws iam create-access-key --user-name <USER> && aws iam delete-access-key --user-name <USER> --access-key-id <OLD_KEY>",
+      "consoleSteps": null
+    }
+  },
+  {
+    "id": "2.1",
+    "category": "Logging",
+    "title": "Ensure CloudTrail is enabled in all regions",
+    "description": "Without multi-region CloudTrail, API activity in non-primary regions goes unlogged. Attackers can operate in unmonitored regions to avoid detection.",
+    "severity": "critical",
+    "evaluator": "cloudtrail_enabled",
+    "remediation": {
+      "description": "Create a multi-region CloudTrail trail.",
+      "command": "aws cloudtrail create-trail --name verdant-trail --s3-bucket-name <BUCKET> --is-multi-region-trail",
+      "consoleSteps": null
+    }
+  },
+  {
+    "id": "2.2",
+    "category": "Logging",
+    "title": "Ensure CloudTrail log file validation is enabled",
+    "description": "Without log file validation, an attacker could tamper with or delete CloudTrail logs without detection.",
+    "severity": "high",
+    "evaluator": "cloudtrail_log_validation",
+    "remediation": {
+      "description": "Enable log file validation on all trails.",
+      "command": "aws cloudtrail update-trail --name <TRAIL_NAME> --enable-log-file-validation",
+      "consoleSteps": null
+    }
+  },
+  {
+    "id": "2.3",
+    "category": "Logging",
+    "title": "Ensure CloudTrail logs are encrypted with KMS",
+    "description": "Unencrypted CloudTrail logs stored in S3 could be read by anyone with bucket access. KMS encryption adds a layer of access control.",
+    "severity": "medium",
+    "evaluator": "cloudtrail_encrypted",
+    "remediation": {
+      "description": "Enable KMS encryption on CloudTrail trails.",
+      "command": "aws cloudtrail update-trail --name <TRAIL_NAME> --kms-key-id <KMS_KEY_ARN>",
+      "consoleSteps": null
+    }
+  },
+  {
+    "id": "3.1",
+    "category": "Monitoring",
+    "title": "Ensure VPC flow logs are enabled",
+    "description": "Without VPC flow logs, network traffic is invisible. You cannot detect unusual traffic patterns, data exfiltration, or lateral movement within your VPC.",
+    "severity": "high",
+    "evaluator": "vpc_flow_logs",
+    "remediation": {
+      "description": "Enable VPC flow logs for all VPCs.",
+      "command": "aws ec2 create-flow-logs --resource-type VPC --resource-ids <VPC_ID> --traffic-type ALL --log-destination-type cloud-watch-logs --log-group-name vpc-flow-logs",
+      "consoleSteps": null
+    }
+  },
+  {
+    "id": "4.1",
+    "category": "Networking",
+    "title": "Ensure no security groups allow ingress 0.0.0.0/0 to port 22",
+    "description": "SSH open to the world is the most common attack vector for cloud instances. Automated scanners continuously probe port 22 across all public IPs.",
+    "severity": "critical",
+    "evaluator": "no_ssh_open",
+    "remediation": {
+      "description": "Restrict SSH access to specific IP ranges.",
+      "command": "aws ec2 revoke-security-group-ingress --group-id <SG_ID> --protocol tcp --port 22 --cidr 0.0.0.0/0",
+      "consoleSteps": null
+    }
+  },
+  {
+    "id": "4.2",
+    "category": "Networking",
+    "title": "Ensure no security groups allow ingress 0.0.0.0/0 to port 3389",
+    "description": "RDP open to the world exposes Windows instances to brute-force attacks. RDP vulnerabilities like BlueKeep can be exploited remotely.",
+    "severity": "critical",
+    "evaluator": "no_rdp_open",
+    "remediation": {
+      "description": "Restrict RDP access to specific IP ranges.",
+      "command": "aws ec2 revoke-security-group-ingress --group-id <SG_ID> --protocol tcp --port 3389 --cidr 0.0.0.0/0",
+      "consoleSteps": null
+    }
+  },
+  {
+    "id": "4.3",
+    "category": "Networking",
+    "title": "Ensure the default security group restricts all traffic",
+    "description": "The default security group allows all outbound traffic and all inbound traffic from the same group. If resources are accidentally placed in it, they may be more exposed than intended.",
+    "severity": "high",
+    "evaluator": "default_sg_restricted",
+    "remediation": {
+      "description": "Remove all inbound and outbound rules from the default security group.",
+      "command": null,
+      "consoleSteps": ["Go to VPC > Security Groups", "Select the default group", "Remove all inbound and outbound rules"]
+    }
+  },
+  {
+    "id": "5.1",
+    "category": "Storage",
+    "title": "Ensure S3 bucket public access is blocked at account level",
+    "description": "Without account-level S3 public access blocking, any bucket can be made public — accidentally or by a compromised IAM user. This is the #1 cause of S3 data breaches.",
+    "severity": "critical",
+    "evaluator": "s3_public_access_blocked",
+    "remediation": {
+      "description": "Enable S3 Block Public Access at the account level.",
+      "command": "aws s3control put-public-access-block --account-id <ACCOUNT_ID> --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true",
+      "consoleSteps": null
+    }
+  },
+  {
+    "id": "5.2",
+    "category": "Storage",
+    "title": "Ensure S3 buckets have server-side encryption enabled",
+    "description": "Unencrypted S3 objects are readable by anyone with access to the underlying storage. Encryption at rest protects data if physical media is compromised.",
+    "severity": "high",
+    "evaluator": "s3_encryption_enabled",
+    "remediation": {
+      "description": "Enable default encryption on all S3 buckets.",
+      "command": "aws s3api put-bucket-encryption --bucket <BUCKET> --server-side-encryption-configuration '{\"Rules\":[{\"ApplyServerSideEncryptionByDefault\":{\"SSEAlgorithm\":\"AES256\"}}]}'",
+      "consoleSteps": null
+    }
+  },
+  {
+    "id": "5.3",
+    "category": "Storage",
+    "title": "Ensure S3 bucket versioning is enabled",
+    "description": "Without versioning, deleted or overwritten objects are permanently lost. Versioning provides a safety net against accidental deletion and ransomware attacks.",
+    "severity": "medium",
+    "evaluator": "s3_versioning_enabled",
+    "remediation": {
+      "description": "Enable versioning on all S3 buckets.",
+      "command": "aws s3api put-bucket-versioning --bucket <BUCKET> --versioning-configuration Status=Enabled",
+      "consoleSteps": null
+    }
+  }
+]
