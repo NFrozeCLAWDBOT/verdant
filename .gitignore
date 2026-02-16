@@ -1,0 +1,11 @@
+CLAUDE.md
+*.mp4
+node_modules/
+dist/
+.terraform/
+*.tfstate
+*.tfstate.backup
+.env
+__pycache__/
+*.zip
+.terraform.lock.hcl
