@@ -1,0 +1,137 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+    --radius-2xl: calc(var(--radius) + 8px);
+    --radius-3xl: calc(var(--radius) + 12px);
+    --radius-4xl: calc(var(--radius) + 16px);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+
+    --font-heading: 'Space Grotesk', sans-serif;
+    --font-body: 'IBM Plex Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    --color-emerald-deep: #1B6B2E;
+    --color-emerald-bright: #2E8B3E;
+    --color-emerald-vivid: #4EC54E;
+    --color-emerald-glow: #7EE87E;
+    --color-danger: #DC2626;
+    --color-warning: #F59E0B;
+    --color-success: #4EC54E;
+}
+
+:root {
+    --radius: 1rem;
+    --background: #0A0F0A;
+    --foreground: #E8F5E8;
+    --card: rgba(10, 15, 10, 0.6);
+    --card-foreground: #E8F5E8;
+    --popover: #1A2A1A;
+    --popover-foreground: #E8F5E8;
+    --primary: #1B6B2E;
+    --primary-foreground: #E8F5E8;
+    --secondary: #1A2A1A;
+    --secondary-foreground: #E8F5E8;
+    --muted: #1A2A1A;
+    --muted-foreground: #A8C4A8;
+    --accent: #4EC54E;
+    --accent-foreground: #0A0F0A;
+    --destructive: #DC2626;
+    --border: rgba(78, 197, 78, 0.15);
+    --input: rgba(78, 197, 78, 0.15);
+    --ring: #4EC54E;
+    --chart-1: #4EC54E;
+    --chart-2: #2E8B3E;
+    --chart-3: #1B6B2E;
+    --chart-4: #7EE87E;
+    --chart-5: #A8C4A8;
+    --sidebar: #0A0F0A;
+    --sidebar-foreground: #E8F5E8;
+    --sidebar-primary: #1B6B2E;
+    --sidebar-primary-foreground: #E8F5E8;
+    --sidebar-accent: #1A2A1A;
+    --sidebar-accent-foreground: #E8F5E8;
+    --sidebar-border: rgba(78, 197, 78, 0.15);
+    --sidebar-ring: #4EC54E;
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+    body {
+        @apply bg-background text-foreground font-body;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    h1, h2, h3, h4, h5, h6 {
+        font-family: var(--font-heading);
+    }
+    code, pre {
+        font-family: var(--font-mono);
+    }
+}
+
+.glass-panel {
+    background: rgba(10, 15, 10, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(78, 197, 78, 0.15);
+    border-radius: 16px;
+}
+
+.glass-panel-hover:hover {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-color: rgba(78, 197, 78, 0.3);
+}
+
+.gradient-cta {
+    background: linear-gradient(135deg, #1B6B2E, #4EC54E);
+}
+
+.gradient-cta:hover {
+    background: linear-gradient(135deg, #2E8B3E, #7EE87E);
+    box-shadow: 0 0 20px rgba(78, 197, 78, 0.3);
+}
+
+.glow-border {
+    box-shadow: 0 0 15px rgba(78, 197, 78, 0.1);
+}
