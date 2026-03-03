@@ -25,7 +25,7 @@ export function HeroSection() {
         className="relative z-10 glass-panel px-8 py-12 md:px-16 md:py-16 max-w-2xl mx-4 text-center"
       >
         <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-foreground mb-4">
-          Verdant
+          VERDANT
         </h1>
         <p className="text-xl md:text-2xl text-muted-foreground font-body mb-2">
           AWS Security Posture Dashboard
